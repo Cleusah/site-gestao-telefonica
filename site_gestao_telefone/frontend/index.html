@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gestão de Contatos</title>
+
+<link rel="icon" type="image/png" href="/static/iconeContatos.png">
+
+ <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --brand: #1a1a2e;
+  --brand-mid: #16213e;
+  --icone: #396cf7;
+  --accent: #0f3460;
+  --highlight: #e94560;
+  --surface: #ffffff;
+  --surface-2: #f8f8fc;
+  --surface-3: #f0f0f8;
+  --border: rgba(15, 76, 151, 0.1);
+  --border-strong: rgba(15,52,96,0.2);
+  --text-primary: #0d0d1a;
+  --text-secondary: #5a5a7a;
+  --text-muted: #65656e;
+  --shadow-sm: 0 2px 8px rgba(15,52,96,0.06);
+  --shadow-md: 0 8px 32px rgba(15,52,96,0.10);
+  --shadow-lg: 0 24px 64px rgba(15,52,96,0.18);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--surface-2);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ─── TOPBAR ─── */
+.topbar {
+  background: var(--brand);
+  padding: 0 32px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--icone);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.topbar-label {
+  font-size: 13px;
+  color: rgba(255,255,255,0.45);
+}
+
+.btn-login {
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  padding: 7px 16px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.08);
+  color: white;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-login:hover { background: rgba(255,255,255,0.14); }
+
+.badge-admin {
+  font-size: 12px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(47, 0, 255, 0.2);
+  color: #fffdfe;
+  border: 1px solid rgba(34, 1, 244, 0.786);
+}
+
+.btn-logout {
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  padding: 7px 16px;
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: rgba(255,255,255,0.55);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-logout:hover { background: rgba(255,255,255,0.07); color: white; }
+
+/* ─── MAIN ─── */
+.container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 36px 24px;
+}
+
+/* ─── HEADER ─── */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 28px;
+}
+
+.page-title-block .page-title {
+  font-size: 26px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+}
+
+.page-title-block .page-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.btn-add {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #0f3460; /* azul */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  transition: all 0.15s;
+  box-shadow: 0 4px 16px rgba(15,52,96,0.25);
+}
+
+.btn-add:hover {
+  background: #0f3460; /* azul no hover */
+  box-shadow: 0 6px 20px rgba(34, 1, 244, 0.786);
+  transform: translateY(-1px);
+}
+
+/* ─── FILTERS CARD ─── */
+.filters-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.search-wrap {
+  flex: 1;
+  min-width: 220px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 13px;
+  font-size: 13px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search {
+  width: 100%;
+  padding: 10px 14px 10px 36px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search:focus {
+  outline: none;
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+  background: white;
+}
+
+.search::placeholder { color: var(--text-muted); }
+
+.dep-select {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-2);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-secondary);
+  width: 240px;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.dep-select:focus {
+  outline: none;
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+}
+
+/* ─── TABLE CARD ─── */
+.table-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+thead tr {
+  background: var(--brand);
+}
+
+th {
+  padding: 13px 18px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+th:first-child { color: white; }
+
+tbody tr {
+  border-bottom: 1px solid var(--surface-3);
+  transition: background 0.1s;
+}
+
+tbody tr:last-child { border-bottom: none; }
+
+tbody tr:hover { background: var(--surface-3); }
+
+td {
+  padding: 14px 18px;
+  font-size: 14px;
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+/* Avatar + name */
+.contact-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.contact-name { font-weight: 500; font-size: 14px; }
+
+/* Department badge */
+.dep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--surface-3);
+  color: var(--text-secondary);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid var(--border);
+}
+
+/* Extension badge */
+.ext-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-family: 'DM Mono', monospace;
+  color: var(--accent);
+  background: rgba(15,52,96,0.06);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(15,52,96,0.12);
+}
+
+.ext-badge .ext-prefix {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* Action buttons */
+.action-cell { display: flex; gap: 6px; }
+
+.btn-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.btn-edit {
+  background: rgba(15,52,96,0.07);
+  color: var(--accent);
+}
+.btn-edit:hover { background: var(--accent); color: white; }
+
+.btn-del {
+  background: rgba(233,69,96,0.07);
+  color: var(--highlight);
+}
+.btn-del:hover { background: var(--highlight); color: white; }
+
+/* ─── EMPTY STATE ─── */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.empty-state i { font-size: 40px; margin-bottom: 12px; opacity: 0.4; }
+.empty-state p { font-size: 14px; }
+
+/* ─── PAGINATION ─── */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  margin-top: 20px;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+}
+
+.pagination button.active {
+  background: var(--brand);
+  color: white;
+  border-color: var(--brand);
+}
+
+.pagination button:hover:not(.active) {
+  background: var(--surface-3);
+  border-color: var(--border-strong);
+}
+
+/* ─── OVERLAY ─── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(13,13,26,0.55);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+}
+.overlay.open { display: flex; }
+
+/* ─── MODAL ─── */
+.modal-content {
+  background: white;
+  padding: 0;
+  border-radius: var(--radius-xl);
+  width: 400px;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: modalIn 0.2s ease;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.modal-header {
+  background: var(--brand);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-header-icon {
+  width: 36px;
+  height: 36px;
+  background: rgba(233,69,96,0.2);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f87591;
+  font-size: 15px;
+}
+
+.modal-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  letter-spacing: -0.2px;
+}
+
+.modal-body { padding: 24px; }
+
+.form-group { margin-bottom: 16px; }
+
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+  background: white;
+}
+
+.input-ext {
+  display: flex;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--surface-2);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input-ext:focus-within {
+  border-color: var(--highlight);
+  box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+  background: white;
+}
+
+.input-ext .prefix {
+  padding: 11px 13px;
+  background: var(--brand);
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  font-family: 'DM Mono', monospace;
+  border-right: 1px solid rgba(255,255,255,0.15);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+}
+
+.input-ext input {
+  border: none;
+  flex: 1;
+  background: transparent;
+  padding: 11px 13px;
+  font-family: 'DM Mono', monospace;
+}
+
+.input-ext input:focus { outline: none; box-shadow: none; }
+
+.modal-footer {
+  padding: 0 24px 24px;
+  display: flex;
+  gap: 10px;
+}
+
+.modal-footer button {
+  flex: 1;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  border: none;
+  transition: all 0.15s;
+}
+
+.btn-save {
+  background: var(--icone);
+  color: white;
+  box-shadow: 0 3px 12px rgba(48, 18, 219, 0.96);
+}
+.btn-save:hover { background: #2525cc; }
+
+.btn-cancel-modal {
+  background: var(--surface-3);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-strong) !important;
+}
+.btn-cancel-modal:hover { background: var(--surface-2); }
+
+/* ─── ALERT ─── */
+.alert {
+  display: none;
+  padding: 10px 13px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 16px;
+  border-left: 3px solid;
+}
+.alert-error {
+  background: rgba(233,69,96,0.07);
+  color: #b91c1c;
+  border-color: var(--highlight);
+}
+
+/* ─── LOGIN MODAL ─── */
+#login-overlay .modal-content { width: 360px; }
+
+/* ─── STATS BAR ─── */
+.stats-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-pill i {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.stat-pill strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.stat-pill span {
+  color: var(--text-muted);
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-icon"><i class="fas fa-address-book" style="font-size:13px;color:white;"></i></div>
+    Gestão de Contatos
+  </div>
+  <div class="topbar-right" id="topbar-right">
+    <span class="topbar-label">Área de administração:</span>
+    <button class="btn-login" onclick="openLogin()"><i class="fas fa-lock" style="font-size:11px;margin-right:5px;"></i>Fazer login</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+  <div class="page-header">
+    <div class="page-title-block">
+      <div class="page-title">Contatos</div>
+      <div class="page-subtitle" id="subtitle-count">Carregando...</div>
+    </div>
+    <button class="btn-add" id="btn-add" style="display:none" onclick="openModal()">
+      <i class="fas fa-plus" style="font-size:12px;"></i>Adicionar contato
+    </button>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters-card">
+    <div class="search-wrap">
+      <i class="fas fa-search search-icon"></i>
+      <input class="search" id="search" placeholder="Pesquisar por nome ou extensão…">
+    </div>
+    <select class="dep-select" id="depFilter">
+      <option value="">Todos os departamentos</option>
+    </select>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>Funcionário</th>
+          <th>Departamento</th>
+          <th>Extensão</th>
+          <th id="th-action" style="display:none">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="table"></tbody>
+    </table>
+  </div>
+
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- LOGIN OVERLAY -->
+<div class="overlay" id="login-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-header-icon"><i class="fas fa-shield-alt"></i></div>
+      <h3>Login de administrador</h3>
+    </div>
+    <div class="modal-body">
+      <div id="login-error" class="alert alert-error"></div>
+      <div class="form-group">
+        <label>Utilizador</label>
+        <input id="l-user" placeholder="Username" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <div class="form-group">
+        <label>Palavra-passe</label>
+        <input id="l-pass" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-save" onclick="doLogin()"><i class="fas fa-sign-in-alt" style="margin-right:6px;font-size:12px;"></i>Entrar</button>
+      <button class="btn-cancel-modal" onclick="closeLogin()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="overlay" id="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-header-icon"><i class="fas fa-user-plus" id="modal-icon"></i></div>
+      <h3 id="modal-title">Adicionar contato</h3>
+    </div>
+    <div class="modal-body">
+      <div id="error" class="alert alert-error"></div>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input id="nome" placeholder="Ex: Ana Silva">
+      </div>
+      <div class="form-group">
+        <label>Departamento</label>
+        <select id="dep"></select>
+      </div>
+      <div class="form-group">
+        <label>Extensão</label>
+        <div class="input-ext">
+          <span class="prefix"><i class="fas fa-phone-alt" style="margin-right:6px;font-size:11px;"></i>2607</span>
+          <input id="ext" placeholder="XXXX" maxlength="6">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-save" onclick="save()"><i class="fas fa-check" style="margin-right:6px;font-size:12px;"></i>Guardar</button>
+      <button class="btn-cancel-modal" onclick="closeModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let isAdmin = false;
+let editId = null;
+let currentPage = 1;
+let totalPages = 1;
+let totalContacts = 0;
+
+function getInitials(name) {
+  return name.split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+const avatarColors = ['#0f3460','#e94560','#1a6b50','#7c3aed','#b45309','#0e7490'];
+function avatarColor(name) {
+  let h = 0;
+  for(let c of name) h = (h*31 + c.charCodeAt(0)) & 0xffff;
+  return avatarColors[h % avatarColors.length];
+}
+
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+  el.innerHTML = '<i class="fas fa-exclamation-circle" style="margin-right:6px;"></i>' + msg;
+}
+function clearError(id) { document.getElementById(id).style.display = 'none'; }
+
+function setAdmin(val) {
+  isAdmin = val;
+  document.getElementById('btn-add').style.display = val ? '' : 'none';
+  document.getElementById('th-action').style.display = val ? '' : 'none';
+  const tr = document.getElementById('topbar-right');
+  if(val) {
+    tr.innerHTML = `<span class="badge-admin"><i class="fas fa-shield-alt" style="font-size:10px;margin-right:5px;"></i>Administrador</span><button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt" style="font-size:11px;margin-right:5px;"></i>Sair</button>`;
+  } else {
+    tr.innerHTML = `<span class="topbar-label">Área de administração:</span><button class="btn-login" onclick="openLogin()"><i class="fas fa-lock" style="font-size:11px;margin-right:5px;"></i>Fazer login</button>`;
+  }
+  load();
+}
+
+function logout() { setAdmin(false); }
+
+function openLogin() {
+  document.getElementById('login-overlay').classList.add('open');
+  document.getElementById('l-user').value = '';
+  document.getElementById('l-pass').value = '';
+  clearError('login-error');
+  setTimeout(()=> document.getElementById('l-user').focus(), 120);
+}
+function closeLogin() { document.getElementById('login-overlay').classList.remove('open'); }
+
+async function doLogin() {
+  const u = document.getElementById('l-user').value;
+  const p = document.getElementById('l-pass').value;
+
+  try {
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username: u, password: p })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      showError('login-error', data.detail || 'Erro no login');
+      return;
+    }
+
+    // guardar token
+    localStorage.setItem('token', data.token);
+
+    closeLogin();
+    setAdmin(true);
+
+  } catch (e) {
+    showError('login-error', 'Erro de conexão com servidor');
+  }
+}
+
+async function loadDepartamentos() {
+  try {
+    const res = await fetch('/api/departamentos');
+    const data = await res.json();
+
+    // filtro
+    const sel = document.getElementById('depFilter');
+    sel.innerHTML = '<option value="">Todos os departamentos</option>';
+
+    // select do modal
+    const selModal = document.getElementById('dep');
+    selModal.innerHTML = '<option value="">Selecionar departamento</option>';
+
+    data.forEach(d => {
+      sel.innerHTML += `<option value="${d.nome}">${d.nome}</option>`;
+      selModal.innerHTML += `<option value="${d.nome}">${d.nome}</option>`;
+    });
+
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+document.getElementById('depFilter').addEventListener('change', ()=>{ currentPage=1; load(document.getElementById('search').value); });
+document.getElementById('search').addEventListener('input', (e)=>{ currentPage=1; load(e.target.value); });
+
+async function load(search='') {
+  const dep = document.getElementById('depFilter').value;
+  try {
+    const res = await fetch(`/api/contatos?search=${encodeURIComponent(search)}&departamento=${encodeURIComponent(dep)}&page=${currentPage}&limit=15`);
+    const result = await res.json();
+    const data = result.data;
+    totalContacts = result.total;
+    totalPages = Math.max(1, Math.ceil(result.total / result.limit));
+
+    const sub = document.getElementById('subtitle-count');
+    sub.textContent = result.total === 0 ? 'Nenhum contato encontrado' : `${result.total} contato${result.total !== 1 ? 's' : ''} encontrado${result.total !== 1 ? 's' : ''}`;
+
+    const tbody = document.getElementById('table');
+    if(data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><i class="fas fa-address-book"></i><p>Nenhum contato encontrado</p></div></td></tr>`;
+    } else {
+      tbody.innerHTML = data.map(c => {
+        const initials = getInitials(c.funcionario);
+        const color = avatarColor(c.funcionario);
+        const actionCell = isAdmin ? `<td class="action-cell">
+          <button class="btn-icon btn-edit" title="Editar" onclick="edit(${c.id},'${escHtml(c.funcionario)}','${escHtml(c.departamento)}','${escHtml(c.extensao)}')"><i class="fas fa-pencil-alt"></i></button>
+          <button class="btn-icon btn-del" title="Eliminar" onclick="remover(${c.id})"><i class="fas fa-trash-alt"></i></button>
+        </td>` : '';
+        return `<tr>
+          <td>
+            <div class="contact-cell">
+              <div class="avatar" style="background:${color}">${initials}</div>
+              <span class="contact-name">${escHtml(c.funcionario)}</span>
+            </div>
+          </td>
+          <td><span class="dep-badge"><i class="fas fa-building" style="font-size:10px;"></i>${escHtml(c.departamento)}</span></td>
+          <td><span class="ext-badge"><span class="ext-prefix">2607</span>${escHtml(c.extensao)}</span></td>
+          ${actionCell}
+        </tr>`;
+      }).join('');
+    }
+    renderPagination();
+  } catch(e) { console.error(e); }
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function renderPagination() {
+  const p = document.getElementById('pagination');
+  if(totalPages <= 1) { p.innerHTML=''; return; }
+  let html = '';
+  for(let i=1;i<=totalPages;i++) {
+    html += `<button class="${i===currentPage?'active':''}" onclick="goToPage(${i})">${i}</button>`;
+  }
+  p.innerHTML = html;
+}
+
+function goToPage(page) { currentPage=page; load(document.getElementById('search').value); }
+
+async function remover(id) {
+  if(!confirm('Eliminar este contato?')) return;
+  try {
+    await fetch(`/api/contatos/${id}`, { method:'DELETE' });
+    load(document.getElementById('search').value);
+  } catch(e) { alert('Erro ao eliminar.'); }
+}
+
+function openModal() {
+  editId = null;
+
+  loadDepartamentos(); 
+
+  document.getElementById('modal-title').textContent = 'Adicionar contato';
+  document.getElementById('modal-icon').className = 'fas fa-user-plus';
+  document.getElementById('nome').value = '';
+  document.getElementById('dep').value = '';
+  document.getElementById('ext').value = '';
+  clearError('error');
+
+  document.getElementById('modal').classList.add('open');
+}
+
+function edit(id, funcionario, departamento, extensao) {
+  editId = id;
+  document.getElementById('modal-title').textContent = 'Editar contato';
+  document.getElementById('modal-icon').className = 'fas fa-user-edit';
+  document.getElementById('nome').value = funcionario;
+  document.getElementById('dep').value = departamento;
+  document.getElementById('ext').value = extensao;
+  clearError('error');
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+async function save() {
+  clearError('error');
+  const obj = {
+    funcionario: document.getElementById('nome').value.trim(),
+    departamento: document.getElementById('dep').value.trim(),
+    extensao: document.getElementById('ext').value.trim()
+  };
+  if(!obj.funcionario || !obj.departamento || !obj.extensao) {
+    showError('error','Preencha todos os campos obrigatórios.'); return;
+  }
+  const url = editId ? `/api/contatos/${editId}` : `/api/contatos`;
+  const method = editId ? 'PUT' : 'POST';
+  try {
+    const res = await fetch(url, { method, headers:{'Content-Type':'application/json'}, body:JSON.stringify(obj) });
+    const data = await res.json();
+    if(!res.ok) {
+      showError('error', data.detail==='EXTENSAO_EXISTE' ? 'Essa extensão já existe.' : 'Erro ao guardar. Tente novamente.'); return;
+    }
+    closeModal();
+    loadDepartamentos();
+    load(document.getElementById('search').value);
+  } catch(e) { showError('error','Erro de ligação ao servidor.'); }
+}
+
+loadDepartamentos();
+load();
+</script>
+</body>
+</html>
